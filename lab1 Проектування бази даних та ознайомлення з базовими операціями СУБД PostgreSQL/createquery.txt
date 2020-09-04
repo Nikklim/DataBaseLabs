@@ -1,0 +1,124 @@
+create table persons
+(
+	person_id INT GENERATED ALWAYS AS IDENTITY,
+	name varchar(50) not null,
+	surname varchar(50) not null,
+	birthdate date,
+	
+	primary key (person_id)
+);
+create table authors
+(
+	 author_id INT GENERATED ALWAYS AS IDENTITY,
+	 person_id int not null,
+	
+	 primary key (author_id),
+	CONSTRAINT fk_person
+      FOREIGN KEY(person_id) 
+	  REFERENCES persons(person_id)
+);
+create table readers
+(
+	reader_id INT GENERATED ALWAYS AS IDENTITY,
+	person_id int not null,
+	
+	primary key (reader_id),
+	CONSTRAINT fk_person
+      FOREIGN KEY(person_id) 
+	  REFERENCES persons(person_id)
+);
+
+
+create table books
+(
+	book_id INT GENERATED ALWAYS AS IDENTITY,
+	title varchar(50) not null,
+	PagesCount int,
+	
+	primary key (book_id)
+);
+
+create table linksbooktoauthor
+(
+	id INT GENERATED ALWAYS AS IDENTITY,
+	book_id int not null,
+	author_id int not null,
+	
+	primary key(id),
+	CONSTRAINT fk_book
+      FOREIGN KEY(book_id) 
+	  REFERENCES books(book_id),
+	CONSTRAINT fk_author
+      FOREIGN KEY(author_id) 
+	  REFERENCES authors(author_id)
+);
+create table linksreadertobook
+(
+	id INT GENERATED ALWAYS AS IDENTITY,
+	book_id int not null,
+	reader_id int not null,
+	
+	primary key(id),
+	CONSTRAINT fk_book
+      FOREIGN KEY(book_id) 
+	  REFERENCES books(book_id),
+	CONSTRAINT fk_reader
+      FOREIGN KEY(reader_id) 
+	  REFERENCES readers(reader_id)
+);
+
+
+insert into persons (name, surname) values ('Nikita', 'Klymchuk');
+insert into persons (name, surname) values ('Kolya', 'Alekseev');
+insert into persons (name, surname) values ('Dmitry', 'Volkov');
+insert into persons (name, surname) values ('Daniil', 'Vorobev');
+insert into persons (name, surname) values ('Anna', 'Guseeva');
+
+select * from persons
+
+insert into authors (person_id) values (1);
+insert into authors (person_id) values (2);
+insert into authors (person_id) values (3);
+
+select name, surname from authors join persons on authors.person_id = persons.person_id
+
+insert into readers (person_id) values (4);
+insert into readers (person_id) values (5);
+
+select name, surname from readers join persons on readers.person_id = persons.person_id
+
+insert into books (title, pagescount) values('Harry Potter 1 part', 380);
+insert into books (title, pagescount) values('Harry Potter 2 part', 140);
+insert into books (title, pagescount) values('Harry Potter 3 part', 290);
+insert into books (title, pagescount) values('Harry Potter 4 part', 450);
+insert into books (title, pagescount) values('Harry Potter 5 part', 320);
+
+select * from books
+
+insert into linksbooktoauthor (book_id, author_id) values(1,1);
+insert into linksbooktoauthor (book_id, author_id) values(2,2);
+insert into linksbooktoauthor (book_id, author_id) values(4,2);
+insert into linksbooktoauthor (book_id, author_id) values(3,3);
+insert into linksbooktoauthor (book_id, author_id) values(5,1);
+
+select title, name from linksbooktoauthor 
+						join books 
+						on linksbooktoauthor.book_id = books.book_id
+						join authors
+						on linksbooktoauthor.author_id = authors.author_id
+						join persons
+						on authors.person_id = persons.person_id
+
+
+insert into linksreadertobook (book_id, reader_id) values(1, 1);
+insert into linksreadertobook (book_id, reader_id) values(2, 2);
+insert into linksreadertobook (book_id, reader_id) values(3, 2);
+insert into linksreadertobook (book_id, reader_id) values(5, 1);
+
+select title, name from linksreadertobook 
+						join books 
+						on linksreadertobook.book_id = books.book_id
+						join readers
+						on linksreadertobook.reader_id = readers.reader_id
+						join persons
+						on readers.person_id = persons.person_id
